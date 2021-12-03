@@ -15,11 +15,11 @@ using Node = std::pair<int, int>;
 std::map<Node, bool> isVisited{};
 
 
-void read(std::string filename, std::vector<std::vector<int>>& array, int& N) {
+void read(std::string fileName, std::vector<std::vector<int>>& array, int& N) {
 	std::fstream file;
-	file.open(filename);
+	file.open(fileName);
 	if (!file.is_open()) {
-		err.addCriticalError("CANNOT READ FILE:" + filename, "READ");
+		err.addCriticalError("CANNOT READ FILE:" + fileName, "READ");
 	}
 	file >> N;
 	if (N < 3 && N > 33)
@@ -47,33 +47,33 @@ void read(std::string filename, std::vector<std::vector<int>>& array, int& N) {
 	}
 }
 
-void createGraph(std::vector<std::vector<int>>& inpt_array, std::map<Node, std::set<Node>>& Graph, int N) {
+void createGraph(std::vector<std::vector<int>>& inptArray, std::map<Node, std::set<Node>>& graph, int N) {
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++)
 		{
 			//UP
-			if (((i - 1) >= 0) && (inpt_array[i - 1][j]) == 0) {
-				Graph[{i, j}].insert({ i - 1, j });
+			if (((i - 1) >= 0) && (inptArray[i - 1][j]) == 0) {
+				graph[{i, j}].insert({ i - 1, j });
 			}
 			//DOWN
-			if (((i + 1) < N) && (inpt_array[i + 1][j] == 0))
+			if (((i + 1) < N) && (inptArray[i + 1][j] == 0))
 			{
-				Graph[{ i, j }].insert({ i + 1, j });
+				graph[{ i, j }].insert({ i + 1, j });
 			}
 			//LEFT
-			if (((j - 1) >= 0) && (inpt_array[i][j - 1]) == 0) {
-				Graph[{i, j}].insert({ i, j - 1 });
+			if (((j - 1) >= 0) && (inptArray[i][j - 1]) == 0) {
+				graph[{i, j}].insert({ i, j - 1 });
 			}
 			//RIGHT
-			if (((j + 1) < N) && (inpt_array[i][j + 1]) == 0) {
-				Graph[{i, j}].insert({ i, j + 1 });
+			if (((j + 1) < N) && (inptArray[i][j + 1]) == 0) {
+				graph[{i, j}].insert({ i, j + 1 });
 			}
 		}
 	}
 }
 
-void DFS(Node pos, std::vector<std::vector<int>>& data, std::map<Node, std::set<Node>>& Graph, int N) {
+void DFS(Node pos, std::vector<std::vector<int>>& data, std::map<Node, std::set<Node>>& graph, int N) {
 	const Node& it = pos;
 	//std::cout << "[" << it.first << ", " << it.second << "]" << std::endl; //UNCOMMENT TO DEBUG
 	if (!isVisited[it])
@@ -124,21 +124,21 @@ void DFS(Node pos, std::vector<std::vector<int>>& data, std::map<Node, std::set<
 		
 		isVisited[it] = true;
 		std::set<Node> coords;
-		coords.insert(Graph[it].cbegin(), Graph[it].cend());
+		coords.insert(graph[it].cbegin(), graph[it].cend());
 		//LOOKING ALL NEIGHBOURS
 		while (coords.size() != 0){
 			std::set<Node>::iterator iter = coords.cbegin();
-			DFS(*iter, data, Graph, N);
+			DFS(*iter, data, graph, N);
 			coords.erase(iter);
 		}
 	}
 }
 template<typename T>
-void write(T val, std::string filename) {
-	std::ofstream file(filename);
+void write(T val, std::string fileName) {
+	std::ofstream file(fileName);
 	if (!file.is_open())
 	{
-		err.addCriticalError("CANNOT OPEN FILE: " + filename, "WRITE");
+		err.addCriticalError("CANNOT OPEN FILE: " + fileName, "WRITE");
 	}
 
 	file << val;
@@ -153,10 +153,10 @@ int main() {
 
 	read("INPUT.txt", labirinth, N);
 
-	std::map<Node, std::set<Node>> Graph{};
-	createGraph(labirinth, Graph, N);
+	std::map<Node, std::set<Node>> graph{};
+	createGraph(labirinth, graph, N);
 
-	DFS({0, 0}, labirinth, Graph, N);
+	DFS({0, 0}, labirinth, graph, N);
 
 	write(result, "OUTPUT.txt");
 
